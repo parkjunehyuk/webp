@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>링크 꾸미기</title>
+    <style>
+        li{
+            color:green;
+        }
+        a {
+            color: green;
+            text-decoration: none; /* 밑줄 제거 */
+        }
+
+        /* 2. 마우스를 올렸을 때 스타일: violet 색, 밑줄 추가 */
+        a:hover {
+            color: violet;
+            text-decoration: underline; /* 밑줄 표시 */
+        }
+    </style>
+</head>
+
+<body class="main">
+    <h3>링크 꾸미기</h3>
+    <p>초록색에 밑줄없는 링크. 마우스를<br>
+        올리면 밑줄과 violet 색으로 변경</p>
+    <hr>
+    <ul id="list">
+        <li><a href="https://naver.com">네이버 사이트</a></li>
+        <li>구글 사이트</a></li>
+    </ul>
+</body>
+
+</html>

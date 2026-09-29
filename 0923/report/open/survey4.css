@@ -1,0 +1,30 @@
+body {
+    background-color: aliceblue;
+    padding: 10px;
+}
+
+form {
+    background: pink;
+}
+
+h1 {
+    text-align: center;
+    color: brown;
+}
+
+body label,
+p {
+    font-family: 휴먼편지체, 굴림, serif;
+    font-size: 1em;
+}
+
+span {
+    color: blue;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+footer {
+    background: orange;
+    border-radius: 10px;
+}

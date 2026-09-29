@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>간단한 CSS 예제 - 프로필 카드</title>
+  <style>
+    /* 모든 요소의 크기 계산을 쉽게 설정합니다. */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      display: grid;
+      min-height: 100vh;
+      place-items: center;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .profile {
+      width: min(90%, 360px);
+      padding: 32px;
+      text-align: center;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .avatar {
+      display: grid;
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 16px;
+      place-items: center;
+      color: #fff;
+      font-size: 36px;
+      font-weight: bold;
+      background: #667eea;
+      border-radius: 50%;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      color: #222;
+    }
+
+    p {
+      margin-bottom: 24px;
+      color: #666;
+    }
+
+    a {
+      display: inline-block;
+      padding: 12px 24px;
+      color: #fff;
+      text-decoration: none;
+      background: #667eea;
+      border-radius: 24px;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    a:hover {
+      background: #4c63c7;
+      transform: translateY(-3px);
+    }
+  </style>
+</head>
+<body>
+  <section class="profile">
+    <div class="avatar">김</div>
+    <h1>김민수</h1>
+    <p>웹을 공부하고 있는 개발자입니다.</p>
+    <a href="#">프로필 보기</a>
+  </section>
+</body>
+</html>
