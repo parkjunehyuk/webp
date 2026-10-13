@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>윤년 판별기</title>
+</head>
+
+<body>
+    <h1>윤년 판별기</h1>
+    <form id="year-form">
+        <label for="year">연도 입력</label>
+        <input id="year" type="number" min="1" step="1" required placeholder="예: 2024">
+        <button type="submit">판별하기</button>
+    </form>
+    <p id="result" aria-live="polite"></p>
+
+    <script>
+        /*
+        document.getElementById('year-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const year = Number(document.getElementById('year').value);
+            const result = document.getElementById('result');
+
+            if (!Number.isSafeInteger(year) || year < 1) {
+                result.textContent = '1 이상의 올바른 연도를 입력해 주세요.';
+                return;
+            }
+
+            const isLeapYear = year % 400 === 0 || (year % 4 === 0 && year % 100 !== 0); //100이지만 400의 배수면 윤년
+            result.textContent = year + '년은 ' + (isLeapYear ? '윤년' : '평년') + '입니다.';
+        });
+        */
+        const input = prompt('연도를 입력해 주세요.');
+
+        if (input !== null) {
+            const year = Number(input);
+
+            if (!Number.isSafeInteger(year) || year < 1) {
+                alert('1 이상의 올바른 연도를 입력해 주세요.');
+            } else {
+                const isLeapYear =
+                    year % 400 === 0 || (year % 4 === 0 && year % 100 !== 0);
+
+                alert(year + '년은 ' + (isLeapYear ? '윤년' : '평년') + '입니다.');
+            }
+        }
+    </script>
+</body>
+
+</html>
