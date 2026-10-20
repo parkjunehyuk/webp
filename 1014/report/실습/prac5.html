@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>문자열 배열 다루기</title>
+  </head>
+  <body>
+    <h3>문자열 배열 다루기</h3>
+    <hr />
+    <script>
+      let names = new Array("wonsun", "jaemoonlee", "kitae", "gracehwang");
+      let longestName = names[0];
+
+      document.write("이름 : ");
+      for (let i = 0; i < names.length; i++) {
+        document.write(names[i] + " "); // (1) 각 이름 출력
+        longestName =
+          names[i].length > longestName.length ? names[i] : longestName;
+      }
+      document.write("<br>");
+
+      document.write("가장 긴 이름 : " + longestName); // (2) 가장 긴 이름
+      document.write("<br>");
+
+      names.sort();
+
+      document.write("가장 먼저 나오는 이름 : " + names[0]); // (3) 사전에서 가장 먼저 나오는 이름
+      document.write("<br>");
+
+      document.write("증가순 이름 : "); // (4) 증가 순으로 재 정렬
+      for (let i = 0; i < names.length; i++) {
+        document.write(names[i] + " ");
+      }
+    </script>
+  </body>
+</html>
