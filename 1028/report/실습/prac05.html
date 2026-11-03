@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>z-index 스타일 프로퍼티</title>
+    <style>
+        div{
+            position : absolute;
+        }
+        img{
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <h3>z-index 스타일 프로퍼티</h3>
+    <hr>
+    <div><img src="./4.png" alt="4"><img src="./5.png" alt="5"><img src="./6.png" alt="6"><img src="./7.png" alt="7"></div>
+    
+    <script>
+        let card = document.querySelectorAll("img");
+
+        for(let i=0; i<card.length;i++){
+            card[i].style.zIndex=i+1;
+
+            card[i].onclick=function(){
+                let minZindex = 0;
+
+                for(let c of card){
+                    if(Number(c.style.zIndex)<minZindex){
+                        minZindex = Number(c.style.zIndex);
+                    }
+                }
+                this.style.zIndex= minZindex-1;
+            }
+        }
+    </script>
+</body>
+</html>

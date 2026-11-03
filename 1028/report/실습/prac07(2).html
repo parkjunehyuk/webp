@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang='ko'>
+<head>
+    <title></title>
+</head>
+<body>
+    <h3>
+        클릭하면 90도 회전합니다.
+    </h3>
+    <hr>
+    <img src="./squarePants.png" onclick="rotate(this)" width="220px" height="200px">
+    <script>
+        let rotation = 0
+        function rotate(obj){
+            
+            rotation += 90
+            obj.style.transform = "rotate("+rotation+"deg)"
+            
+        }
+    </script>
+    
+</body>
+</html>

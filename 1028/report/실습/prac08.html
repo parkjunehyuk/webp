@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang='ko'>
+<head>
+    <title>transform:rotate</title>
+</head>
+<body>
+    <h3>
+        클릭하면 2,3,4배로 옆으로 늘어납니다.
+    </h3>
+    <hr>
+    <img src="./squarePants.png" onclick="scale(this)" width="220px" height="200px">
+    <script>
+        let size = 1
+        function scale(obj){
+            
+            if(size<4){
+                size++
+                obj.style.transform = "scale("+size+",1)"
+                
+            }
+            
+            
+        }
+    </script>
+    
+</body>
+</html>
