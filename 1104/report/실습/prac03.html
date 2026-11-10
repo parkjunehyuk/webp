@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>onkeydown</title>
+</head>
+
+<body>
+  <h3>계산기 만들기</h3>
+  <hr />
+  <p>수식을 입력하고 &lt;Enter&gt;를 입력하세요.</p>
+  <div>
+    식 <input type="text" id="exp" value="" /><br />
+    값 <input type="text" id="result" value="" />
+  </div>
+  <script>
+    let exp = document.getElementById("exp");
+    let result = document.getElementById("result");
+    exp.addEventListener("keypress", function (e) {
+      if (e.key == "Enter") {
+        result.value = eval(exp.value);
+      }
+    });
+  </script>
+</body>
+
+</html>

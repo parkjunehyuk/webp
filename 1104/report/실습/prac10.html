@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>계산기 만들기</title>
+  <style>
+    input {
+      width: 300px;
+    }
+
+    button {
+      width: 50px;
+      margin: 5px 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h3>계산기 만들기</h3>
+  <hr />
+  <input type="text" id="exp" value="0" />
+  <table>
+    <tr>
+      <td>
+        <button>BACK</button><button>CE</button><button>C</button><button>=</button>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <button>7</button><button>8</button><button>9</button><button>/</button>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <button>4</button><button>5</button><button>6</button><button>*</button>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <button>1</button><button>2</button><button>3</button><button>-</button>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <button>0</button><button>+</button><button>NONE</button><button>NONE</button>
+      </td>
+    </tr>
+  </table>
+  <script>
+    let exp = document.getElementById("exp");
+    let txt = "";
+    let btns = document.getElementsByTagName("button");
+    for (let i = 0; i < btns.length; i++) {
+      btns[i].addEventListener("click", f);
+    }
+
+    function f() {
+      let btn = this.innerHTML;
+      if (!isNaN(btn)) {
+        txt = txt + btn;
+        exp.value = txt;
+      } else {
+        switch (btn) {
+          case "BACK":
+            txt = txt.substring(0, txt.length - 1);
+            exp.value = txt;
+            break;
+          case "CE":
+          case "C":
+            txt = "";
+            exp.value = "0";
+            break;
+          case "+":
+          case "-":
+          case "/":
+          case "*":
+            txt = txt + btn;
+            exp.value = txt;
+            break;
+          case "=":
+            txt = eval(txt).toString();
+            exp.value = txt;
+            break;
+          default:
+            break;
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>
