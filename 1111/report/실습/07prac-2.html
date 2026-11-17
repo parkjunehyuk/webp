@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>산수를 풀어 봅시다</title>
+    <style>
+      td {
+        padding: 0px 10px;
+      }
+      span {
+        padding-right: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>산수 문제를 풀어 봅시다.</h3>
+    <p>수식을 계산하여 답을 입력하고 채점 버튼을 누르세요.</p>
+    <hr />
+    <div>
+      <table>
+        <tr>
+          <td id="q0"></td>
+          <td><input type="text" /></td>
+        </tr>
+        <tr>
+          <td id="q1"></td>
+          <td><input type="text" /></td>
+        </tr>
+        <tr>
+          <td id="q2"></td>
+          <td><input type="text" /></td>
+        </tr>
+        <tr>
+          <td id="q3"></td>
+          <td><input type="text" /></td>
+        </tr>
+        <tr>
+          <td>
+            <button onclick="checkAnswer()">채점</button>
+          </td>
+          <td>
+            <span id="result">0</span>
+            <button onclick="makeQuestion()">다시</button>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <script>
+      let answers = [];
+      let inputs = document.getElementsByTagName("input");
+
+      function makeQuestion() {
+        let operators = ["+", "-", "*", "/"];
+        answers = [];
+
+        for (let i = 0; i < 4; i++) {
+          let num1 = Math.floor(Math.random() * 10) + 1;
+          let num2 = Math.floor(Math.random() * 10) + 1;
+          let op = operators[Math.floor(Math.random() * 4)];
+
+          if (op == "+") {
+            answers[i] = num1 + num2;
+          } else if (op == "-") {
+            if (num1 < num2) {
+              let temp = num1;
+              num1 = num2;
+              num2 = temp;
+            }
+            answers[i] = num1 - num2;
+          } else if (op == "*") {
+            answers[i] = num1 * num2;
+          } else {
+            num1 = num1 * num2;
+            answers[i] = num1 / num2;
+          }
+
+          document.getElementById("q" + i).innerHTML = num1 + op + num2;
+
+          inputs[i].value = "";
+          document.getElementById("q" + i).style.textDecoration = "none";
+        }
+
+        document.getElementById("result").innerHTML = 0;
+      }
+
+      function checkAnswer() {
+        let count = 0;
+
+        for (let i = 0; i < answers.length; i++) {
+          let question = document.getElementById("q" + i);
+
+          if (
+            inputs[i].value.trim() != "" &&
+            Number(inputs[i].value) == answers[i]
+          ) {
+            count++;
+            question.style.textDecoration = "none";
+          } else {
+            question.style.textDecoration = "line-through";
+          }
+        }
+
+        document.getElementById("result").innerHTML = count;
+      }
+
+      makeQuestion();
+    </script>
+  </body>
+</html>

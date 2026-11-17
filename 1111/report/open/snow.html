@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>눈 내리는 샤갈의 마을</title>
+    <style>
+        body {
+            /* 배경 이미지가 없을 때도 흰 눈이 잘 보이도록 어두운 밤하늘 색 지정 */
+            background-color: #0b1026; 
+            background-image: url("media/night.avif");
+            background-size: cover; /* 화면 크기에 꽉 차게 배경 맞춤 */
+            background-repeat: no-repeat;
+            overflow: hidden; /* 눈송이가 화면 밖으로 나갈 때 스크롤바가 생기는 것을 방지 */
+        }
+
+        div {
+            position: absolute; /* top, left 좌표를 이용해 화면 어디든 자유롭게 배치 */
+            color: white;
+            font-size: 2em;
+            user-select: none; /* 눈송이(*)가 마우스로 드래그 선택되지 않도록 설정 */
+        }
+    </style>
+    <script>
+        // 1. 페이지가 열릴 때(onload) 처음 30개의 눈송이를 화면에 뿌리는 함수
+        function play() {
+            for (var i = 0; i < 70; i++) {
+                // 화면 가로(브라우저 창 너비)와 세로(500px) 범위 내에서 랜덤 위치 계산
+                var left = Math.floor(Math.random() * window.innerWidth);
+                var top = Math.floor(Math.random() * 800);
+                
+                // 눈송이 역할을 할 <div> 태그 문자열 생성 후 body에 추가
+                var text = "<div style='top:" + top + "px; left:" + left + "px;'>*</div>";
+                document.body.innerHTML += text;
+            }
+        }
+
+        // 2. 일정 시간마다 모든 눈송이를 아래로 조금씩 이동시키는 함수
+        function play_down() {
+            // [수정됨] getElementByTagName -> getElementsByTagName ('s' 추가!)
+            // 화면에 있는 모든 <div>(눈송이들)를 배열 형태로 가져옴
+            var downdiv = document.getElementsByTagName("div");
+
+            for (var i = 0; i < downdiv.length; i++) {
+                // 현재 눈송이의 세로 위치(offsetTop)에서 5px만큼 아래로 내린 새 위치 계산
+                var newoffsettop = downdiv[i].offsetTop + 5;
+                var offsetleft = downdiv[i].offsetLeft;
+
+                // 만약 눈송이가 세로 500px(바닥)보다 아래로 내려갔다면?
+                if (newoffsettop > 900) {
+                    newsnow(downdiv[i]); // 하늘 꼭대기(0px)에서 다시 내리도록 초기화
+                }
+                else {
+                    // 아직 바닥에 닿지 않았다면, 새로운 위치 좌표를 가진 <div>를 만들어 기존 것과 교체
+                    var newdiv = document.createElement("div");
+                    newdiv.setAttribute("style", "left: " + offsetleft + "px; top: " + newoffsettop + "px;");
+                    newdiv.innerHTML = "*";
+                    
+                    // 기존 눈송이(downdiv[i])를 새 위치의 눈송이(newdiv)로 바꿈
+                    document.body.replaceChild(newdiv, downdiv[i]);
+                }
+            }
+        }
+
+        // 3. 바닥에 닿은 눈송이를 다시 화면 맨 위(하늘)로 올려보내는 함수
+        function newsnow(downsnow) {
+            var left = Math.floor(Math.random() * window.innerWidth);
+            var top = 0; // [수정됨] 중간에 갑자기 나타나지 않도록 맨 위(0px)에서 시작!
+            
+            var newdiv = document.createElement("div");
+            newdiv.setAttribute("style", "left: " + left + "px; top: " + top + "px;");
+            newdiv.innerHTML = "*";
+            
+            // 바닥에 닿았던 눈송이를 맨 위로 이동한 새 눈송이로 교체
+            document.body.replaceChild(newdiv, downsnow);
+        }
+    </script>
+</head>
+
+<!-- 문서 로드가 완료되면 play() 함수를 실행해 초기 눈송이 30개 생성 -->
+<body onload="play()">
+    <script>
+        // [수정됨] 1000(1초) 대신 50(0.05초)마다 play_down()을 호출해 부드럽게 눈이 내리도록 설정
+        setInterval(play_down, 50);
+    </script>
+</body>
+
+</html>

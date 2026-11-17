@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>눈 내리는 마을</title>
+    <style>
+      body {
+        background-image: url("media/night.avif");
+        background-size: 100%;
+        background-repeat: no-repeat;
+        overflow: hidden;
+      }
+      .snow {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background-image: url("media/spade.png");
+        background-size: 100% 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      let count = 30;
+      let size = 20;
+      let snows = [];
+
+      for (let i = 0; i < count; i++) {
+        let div = document.createElement("div");
+        div.className = "snow";
+        div.style.left = Math.random() * (window.innerWidth - size) + "px";
+        div.style.top = Math.random() * window.innerHeight + "px";
+        document.body.appendChild(div);
+        snows.push(div);
+      }
+
+      function fall() {
+        for (let i = 0; i < snows.length; i++) {
+          let div = snows[i];
+          let top = parseFloat(div.style.top) + 2;
+
+          if (top > window.innerHeight) {
+            top = -size;
+            div.style.left = Math.random() * (window.innerWidth - size) + "px";
+          }
+          div.style.top = top + "px";
+        }
+      }
+
+      setInterval(fall, 30);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>눈 내리는 샤갈의 마을 | Winter Gallery</title>
+  <!-- Tailwind CSS 로드 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: 고운 바탕(시적인 명조) & Noto Sans KR -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* 기본 폰트 및 스타일 설정 */
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #050814;
+      user-select: none;
+    }
+
+    .font-serif-kr {
+      font-family: 'Gowun Batang', serif;
+    }
+
+    /* 밤하늘 배경 그라데이션 (샤갈의 푸른 밤 영감) */
+    .night-sky {
+      background: radial-gradient(circle at 75% 18%, #1e3264 0%, #0d1633 45%, #050814 100%);
+      transition: filter 1.2s ease;
+    }
+
+    /* 창이 포커스를 잃었을 때(onblur) 적용될 어두운 효과 */
+    .sky-dimmed {
+      filter: brightness(0.65) saturate(0.8);
+    }
+
+    /* 반짝이는 별 애니메이션 */
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    .star {
+      position: absolute;
+      background-color: #fff;
+      border-radius: 50%;
+      animation: twinkle var(--duration) infinite ease-in-out;
+      animation-delay: var(--delay);
+    }
+
+    /* 달빛 은은한 광채 */
+    .moon-glow {
+      box-shadow: 0 0 45px 12px rgba(253, 244, 196, 0.25),
+                  0 0 90px 30px rgba(147, 197, 253, 0.12);
+    }
+
+    /* 마을 창문 불빛 전환 효과 */
+    .village-window {
+      transition: fill 0.8s ease, opacity 0.8s ease, filter 0.8s ease;
+    }
+
+    .lights-on .village-window {
+      fill: #fbbf24;
+      filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.85));
+    }
+
+    .lights-off .village-window {
+      fill: #1e293b;
+      filter: none;
+    }
+
+    /* 슬라이더 커스텀 디자인 */
+    input[type="range"] {
+      -webkit-appearance: none;
+      background: rgba(255, 255, 255, 0.15);
+      height: 5px;
+      border-radius: 999px;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #93c5fd;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(147, 197, 253, 0.8);
+      transition: transform 0.15s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      background: #ffffff;
+    }
+  </style>
+</head>
+
+<body class="relative w-screen h-screen overflow-hidden text-slate-100">
+
+  <!-- 1. 밤하늘 및 별빛 배경 레이어 -->
+  <div id="skyContainer" class="night-sky absolute inset-0 z-0">
+    <!-- 자바스크립트로 동적 별 생성 -->
+    <div id="starsLayer" class="absolute inset-0 pointer-events-none"></div>
+
+    <!-- 초승달 & 은은한 달무리 -->
+    <div class="absolute top-12 right-12 sm:top-16 sm:right-24 w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-amber-100/95 moon-glow pointer-events-none flex items-center justify-center">
+      <!-- 달 표면 질감 표현 -->
+      <div class="w-12 h-12 rounded-full bg-amber-200/30 -translate-x-2 -translate-y-1"></div>
+    </div>
+  </div>
+
+  <!-- 2. HTML5 Canvas (눈송이 & 클릭 마법 가루 애니메이션) -->
+  <canvas id="snowCanvas" class="absolute inset-0 z-20 pointer-events-none"></canvas>
+
+  <!-- 3. 하단 샤갈의 겨울 마을 일러스트 (SVG) -->
+  <div id="villageWrapper" class="lights-on absolute bottom-0 left-0 w-full z-10 pointer-events-none">
+    <svg viewBox="0 0 1440 320" preserveAspectRatio="none" class="w-full h-48 sm:h-64 md:h-80 block">
+      <defs>
+        <!-- 눈 덮인 언덕 그라데이션 -->
+        <linearGradient id="hillBack" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1e293b" />
+          <stop offset="100%" stop-color="#0f172a" />
+        </linearGradient>
+        <linearGradient id="hillFront" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#334155" />
+          <stop offset="30%" stop-color="#1e293b" />
+          <stop offset="100%" stop-color="#090d16" />
+        </linearGradient>
+        <linearGradient id="snowCap" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#e2e8f0" />
+          <stop offset="100%" stop-color="#94a3b8" />
+        </linearGradient>
+      </defs>
+
+      <!-- 멀리 보이는 눈 덮인 산맥 -->
+      <path fill="url(#hillBack)" d="M0,210 Q240,120 480,195 T960,175 T1440,200 L1440,320 L0,320 Z" />
+
+      <!-- 앞쪽 눈 언덕 -->
+      <path fill="url(#hillFront)" d="M0,245 Q360,180 720,235 T1440,215 L1440,320 L0,320 Z" />
+      <!-- 언덕 위 하얀 눈 능선 하이라이트 -->
+      <path fill="none" stroke="rgba(226, 232, 240, 0.35)" stroke-width="3" d="M0,245 Q360,180 720,235 T1440,215" />
+
+      <!-- 마을 집들 & 교회 첨탑 (샤갈 그림 속 동화적 실루엣) -->
+      <!-- 왼쪽 작은 오두막 -->
+      <g transform="translate(160, 175)">
+        <rect x="10" y="25" width="55" height="45" fill="#0f172a" rx="2" />
+        <polygon points="4,25 37.5,2 71,25" fill="#1e293b" />
+        <polygon points="4,25 37.5,2 71,25" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-linejoin="round" />
+        <rect class="village-window" x="22" y="38" width="11" height="13" rx="1.5" />
+        <rect class="village-window" x="42" y="38" width="11" height="13" rx="1.5" />
+      </g>
+
+      <!-- 중앙 왼쪽 집 -->
+      <g transform="translate(310, 160)">
+        <rect x="8" y="30" width="68" height="55" fill="#0b1120" rx="2" />
+        <polygon points="0,30 42,4 84,30" fill="#1e293b" />
+        <polygon points="0,30 42,4 84,30" fill="none" stroke="#e2e8f0" stroke-width="3.5" stroke-linejoin="round" />
+        <rect class="village-window" x="20" y="44" width="13" height="15" rx="1.5" />
+        <rect class="village-window" x="48" y="44" width="13" height="15" rx="1.5" />
+        <rect class="village-window" x="34" y="65" width="12" height="18" rx="1" />
+      </g>
+
+      <!-- 중앙 마을 교회 (첨탑) -->
+      <g transform="translate(540, 110)">
+        <rect x="25" y="55" width="50" height="75" fill="#090e1a" />
+        <polygon points="20,55 50,12 80,55" fill="#1e293b" />
+        <polygon points="20,55 50,12 80,55" fill="none" stroke="#f1f5f9" stroke-width="3" stroke-linejoin="round" />
+        <!-- 십자가 장식 -->
+        <line x1="50" y1="2" x2="50" y2="14" stroke="#cbd5e1" stroke-width="2.5" />
+        <line x1="45" y1="6" x2="55" y2="6" stroke="#cbd5e1" stroke-width="2.5" />
+        <!-- 아치형 창문 -->
+        <path class="village-window" d="M43,72 A7,7 0 0,1 57,72 L57,92 L43,92 Z" />
+      </g>
+
+      <!-- 오른쪽 언덕 위 집들 -->
+      <g transform="translate(880, 165)">
+        <rect x="10" y="25" width="64" height="50" fill="#0f172a" rx="2" />
+        <polygon points="2,25 42,0 82,25" fill="#1e293b" />
+        <polygon points="2,25 42,0 82,25" fill="none" stroke="#e2e8f0" stroke-width="3" stroke-linejoin="round" />
+        <rect class="village-window" x="22" y="38" width="12" height="14" rx="1.5" />
+        <rect class="village-window" x="48" y="38" width="12" height="14" rx="1.5" />
+      </g>
+
+      <g transform="translate(1060, 150)">
+        <rect x="12" y="30" width="76" height="58" fill="#090e1a" rx="2" />
+        <polygon points="4,30 50,4 96,30" fill="#1e293b" />
+        <polygon points="4,30 50,4 96,30" fill="none" stroke="#cbd5e1" stroke-width="3.5" stroke-linejoin="round" />
+        <rect class="village-window" x="26" y="45" width="14" height="16" rx="1.5" />
+        <rect class="village-window" x="58" y="45" width="14" height="16" rx="1.5" />
+      </g>
+
+      <!-- 전나무 실루엣들 -->
+      <g fill="#060913">
+        <polygon points="100,240 115,195 130,240" />
+        <polygon points="104,215 115,180 126,215" />
+        <polygon points="450,230 468,175 486,230" />
+        <polygon points="455,200 468,160 481,200" />
+        <polygon points="760,235 776,185 792,235" />
+        <polygon points="1220,225 1238,170 1256,225" />
+        <polygon points="1225,195 1238,155 1251,195" />
+      </g>
+    </svg>
+  </div>
+
+  <!-- 4. 상단 헤더 & 인터랙티브 컨트롤 패널 (Glassmorphism UI) -->
+  <header class="relative z-30 flex flex-col sm:flex-row justify-between items-start sm:items-center p-5 sm:p-8 gap-4 pointer-events-none">
+    <!-- 좌측 타이틀 영역 -->
+    <div class="pointer-events-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs text-blue-200 mb-2">
+        <span id="statusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="statusText">마을에 함박눈이 내리고 있습니다</span>
+      </div>
+      <h1 class="font-serif-kr text-2xl sm:text-4xl font-bold tracking-tight text-white drop-shadow-md">
+        눈 내리는 샤갈의 마을
+      </h1>
+      <p class="text-xs sm:text-sm text-slate-300/80 mt-1 font-light">
+        김춘수 시인의 시와 마르크 샤갈의 겨울밤에서 영감을 받은 인터랙티브 공간
+      </p>
+    </div>
+
+    <!-- 우측 컨트롤 패널 -->
+    <div class="pointer-events-auto w-full sm:w-72 rounded-2xl bg-slate-900/55 backdrop-blur-xl border border-white/15 p-4 shadow-2xl">
+      <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10">
+        <span class="text-xs font-medium text-blue-200 tracking-wider uppercase">겨울밤 제어판</span>
+        <button id="togglePanelBtn" class="text-xs text-slate-400 hover:text-white transition">접기</button>
+      </div>
+
+      <div id="controlBody" class="space-y-3.5 text-xs">
+        <!-- 눈 내림 토글 -->
+        <div class="flex items-center justify-between">
+          <span class="text-slate-200">눈 내림 효과</span>
+          <button id="toggleSnowBtn" class="px-3 py-1.5 rounded-lg bg-blue-500/80 hover:bg-blue-500 text-white font-medium transition shadow-sm">
+            내리는 중 ❄️
+          </button>
+        </div>
+
+        <!-- 마을 불빛 토글 -->
+        <div class="flex items-center justify-between">
+          <span class="text-slate-200">마을 창문 불빛</span>
+          <button id="toggleLightsBtn" class="px-3 py-1.5 rounded-lg bg-amber-500/80 hover:bg-amber-500 text-slate-950 font-semibold transition shadow-sm">
+            켜짐 💡
+          </button>
+        </div>
+
+        <!-- 눈송이 양 슬라이더 -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-slate-300">
+            <span>눈의 양 (밀도)</span>
+            <span id="densityVal" class="text-blue-300 font-medium">140송이</span>
+          </div>
+          <input id="densitySlider" type="range" min="30" max="350" value="140" class="w-full" />
+        </div>
+
+        <!-- 바람 방향/세기 슬라이더 -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-slate-300">
+            <span>겨울 바람</span>
+            <span id="windVal" class="text-blue-300 font-medium">산들바람 (우측)</span>
+          </div>
+          <input id="windSlider" type="range" min="-3" max="3" step="0.2" value="0.6" class="w-full" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 5. 중앙 시적인 문구 카드 (Glassmorphism) -->
+  <main class="relative z-30 flex flex-col items-center justify-center px-4 mt-4 sm:mt-8 pointer-events-none">
+    <div class="pointer-events-auto max-w-md w-full rounded-3xl bg-white/[0.06] backdrop-blur-md border border-white/15 p-6 sm:p-8 text-center shadow-2xl transition hover:bg-white/[0.09]">
+      <p class="font-serif-kr text-base sm:text-lg leading-relaxed text-slate-100/95">
+        “샤갈의 마을에는 삼월에 눈이 온다.<br />
+        봄을 바라고 섰는 사나이의 관자놀이에<br />
+        새로 돋은 정맥이 바르르 떤다.”
+      </p>
+      <div class="mt-4 pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-300/80">
+        <span>김춘수, 「샤갈의 마을에 내리는 눈」</span>
+        <span class="text-blue-300/90">✨ 화면을 클릭해 별빛을 흩뿌려보세요</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- 6. 포커스 이탈(onblur) 시 나타나는 안내 배너 -->
+  <div id="blurOverlay" class="fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-[2px] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-500">
+    <div class="px-6 py-4 rounded-2xl bg-slate-900/85 border border-white/15 text-center shadow-2xl">
+      <p class="font-serif-kr text-lg text-blue-100">잠시 다른 곳을 다녀오시는군요 🌙</p>
+      <p class="text-xs text-slate-400 mt-1">창을 다시 클릭하시면 마을의 눈송이가 반갑게 맞이합니다.</p>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * [1] 배경 밤하늘의 반짝이는 별 생성 (DOM 조작)
+     */
+    const starsLayer = document.getElementById('starsLayer');
+    function createStars() {
+      const starCount = 75;
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        const size = Math.random() * 2.2 + 0.8;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 65}%`; // 하늘 위쪽 65% 영역에만 배치
+        star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+        star.style.setProperty('--delay', `${Math.random() * 4}s`);
+        starsLayer.appendChild(star);
+      }
+    }
+    createStars();
+
+    /**
+     * [2] HTML5 Canvas 설정 및 반응형 크기 조절
+     */
+    const canvas = document.getElementById('snowCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    /**
+     * [3] 눈송이(Snowflake) 및 클릭 반짝이(Sparkle) 상태 관리
+     */
+    let isSnowing = true;
+    let isWindowFocused = true;
+    let targetSnowCount = 140;
+    let windSpeed = 0.6;
+    let snowflakes = [];
+    let sparkles = [];
+
+    class Snowflake {
+      constructor(initial = false) {
+        this.reset(initial);
+      }
+
+      reset(initial = false) {
+        this.x = Math.random() * width;
+        // 처음 시작할 때는 화면 전체에 퍼져있게, 이후에는 하늘 맨 위에서 생성
+        this.y = initial ? Math.random() * height : -10;
+        // 원근감을 위해 크기(반지름)를 다양하게 설정 (1.2px ~ 4.8px)
+        this.radius = Math.random() * 3.6 + 1.2;
+        // 큰 눈송이일수록 가까이 있으므로 더 빠르게 떨어짐
+        this.speedY = (this.radius * 0.45) + Math.random() * 0.6;
+        // 좌우로 살랑거리는 진동 각도
+        this.swayAngle = Math.random() * Math.PI * 2;
+        this.swaySpeed = Math.random() * 0.02 + 0.008;
+        this.opacity = (this.radius / 5) * 0.8 + 0.2;
+      }
+
+      update() {
+        // 창이 포커스를 잃었으면(onblur) 30% 속도로 느리게 내림
+        const focusFactor = isWindowFocused ? 1 : 0.3;
+
+        this.swayAngle += this.swaySpeed * focusFactor;
+        this.y += this.speedY * focusFactor;
+        this.x += (Math.sin(this.swayAngle) * 0.6 + windSpeed * (this.radius * 0.35)) * focusFactor;
+
+        // 화면 좌우 경계를 벗어나면 반대편에서 자연스럽게 등장
+        if (this.x > width + 10) this.x = -10;
+        if (this.x < -10) this.x = width + 10;
+
+        // 바닥에 닿으면 다시 하늘 꼭대기로 초기화
+        if (this.y > height + 10) {
+          this.reset(false);
+        }
+      }
+
+      draw() {
+        ctx.beginPath();
+        // 부드러운 빛 번짐 효과를 위한 방사형 그라데이션
+        const gradient = ctx.createRadialGradient(
+          this.x, this.y, 0,
+          this.x, this.y, this.radius
+        );
+        gradient.addColorStop(0, `rgba(255, 255, 255, ${this.opacity})`);
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+        ctx.fillStyle = gradient;
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // 클릭 시 터지는 별빛 가루 클래스
+    class Sparkle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = Math.random() * 3.5 + 1;
+        this.vx = Math.cos(angle) * velocity;
+        this.vy = Math.sin(angle) * velocity - 1;
+        this.alpha = 1;
+        this.decay = Math.random() * 0.025 + 0.015;
+        this.size = Math.random() * 2.5 + 1;
+        // 금빛 또는 하늘빛 반짝이
+        this.color = Math.random() > 0.5 ? '253, 224, 71' : '186, 230, 253';
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.04; // 미세한 중력
+        this.alpha -= this.decay;
+      }
+
+      draw() {
+        if (this.alpha <= 0) return;
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(${this.color}, ${this.alpha})`;
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // 초기 눈송이 배열 채우기
+    function syncSnowflakes() {
+      while (snowflakes.length < targetSnowCount) {
+        snowflakes.push(new Snowflake(true));
+      }
+      if (snowflakes.length > targetSnowCount) {
+        snowflakes.length = targetSnowCount;
+      }
+    }
+    syncSnowflakes();
+
+    // 메인 애니메이션 루프 (60FPS 부드러운 렌더링)
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+
+      if (isSnowing) {
+        for (let i = 0; i < snowflakes.length; i++) {
+          snowflakes[i].update();
+          snowflakes[i].draw();
+        }
+      }
+
+      // 클릭 별빛 가루 업데이트 및 그리기
+      for (let i = sparkles.length - 1; i >= 0; i--) {
+        sparkles[i].update();
+        sparkles[i].draw();
+        if (sparkles[i].alpha <= 0) {
+          sparkles.splice(i, 1);
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    /**
+     * [4] 인터랙티브 이벤트 리스너 연결
+     */
+    // 화면 클릭 시 마법 가루 흩뿌리기
+    window.addEventListener('click', (e) => {
+      // 컨트롤 패널 버튼 클릭 시에는 제외
+      if (e.target.closest('button') || e.target.closest('input')) return;
+      for (let i = 0; i < 24; i++) {
+        sparkles.push(new Sparkle(e.clientX, e.clientY));
+      }
+    });
+
+    // 눈 내림 On/Off 버튼
+    const toggleSnowBtn = document.getElementById('toggleSnowBtn');
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+
+    toggleSnowBtn.addEventListener('click', () => {
+      isSnowing = !isSnowing;
+      if (isSnowing) {
+        toggleSnowBtn.textContent = '내리는 중 ❄️';
+        toggleSnowBtn.className = 'px-3 py-1.5 rounded-lg bg-blue-500/80 hover:bg-blue-500 text-white font-medium transition shadow-sm';
+        statusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
+        statusText.textContent = '마을에 함박눈이 내리고 있습니다';
+      } else {
+        toggleSnowBtn.textContent = '멈춤 ⏸️';
+        toggleSnowBtn.className = 'px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium transition shadow-sm';
+        statusDot.className = 'w-2 h-2 rounded-full bg-slate-400';
+        statusText.textContent = '눈이 잠시 그친 고요한 밤입니다';
+      }
+    });
+
+    // 마을 창문 불빛 On/Off 버튼
+    const toggleLightsBtn = document.getElementById('toggleLightsBtn');
+    const villageWrapper = document.getElementById('villageWrapper');
+    let lightsOn = true;
+
+    toggleLightsBtn.addEventListener('click', () => {
+      lightsOn = !lightsOn;
+      if (lightsOn) {
+        villageWrapper.classList.remove('lights-off');
+        villageWrapper.classList.add('lights-on');
+        toggleLightsBtn.textContent = '켜짐 💡';
+        toggleLightsBtn.className = 'px-3 py-1.5 rounded-lg bg-amber-500/80 hover:bg-amber-500 text-slate-950 font-semibold transition shadow-sm';
+      } else {
+        villageWrapper.classList.remove('lights-on');
+        villageWrapper.classList.add('lights-off');
+        toggleLightsBtn.textContent = '소등 🌑';
+        toggleLightsBtn.className = 'px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 font-medium transition shadow-sm';
+      }
+    });
+
+    // 눈의 양 슬라이더
+    const densitySlider = document.getElementById('densitySlider');
+    const densityVal = document.getElementById('densityVal');
+    densitySlider.addEventListener('input', (e) => {
+      targetSnowCount = parseInt(e.target.value, 10);
+      densityVal.textContent = `${targetSnowCount}송이`;
+      syncSnowflakes();
+    });
+
+    // 바람 세기/방향 슬라이더
+    const windSlider = document.getElementById('windSlider');
+    const windVal = document.getElementById('windVal');
+    windSlider.addEventListener('input', (e) => {
+      windSpeed = parseFloat(e.target.value);
+      if (Math.abs(windSpeed) < 0.2) {
+        windVal.textContent = '고요함';
+      } else if (windSpeed > 0) {
+        windVal.textContent = windSpeed > 1.8 ? '강한 동풍 →' : '산들바람 →';
+      } else {
+        windVal.textContent = windSpeed < -1.8 ? '← 강한 서풍' : '← 산들바람';
+      }
+    });
+
+    // 제어판 접기/펼치기
+    const togglePanelBtn = document.getElementById('togglePanelBtn');
+    const controlBody = document.getElementById('controlBody');
+    let isPanelOpen = true;
+    togglePanelBtn.addEventListener('click', () => {
+      isPanelOpen = !isPanelOpen;
+      controlBody.style.display = isPanelOpen ? 'block' : 'none';
+      togglePanelBtn.textContent = isPanelOpen ? '접기' : '펼치기';
+    });
+
+    /**
+     * [5] 브라우저 창 포커스 감지 (window.onblur / window.onfocus 응용)
+     */
+    const skyContainer = document.getElementById('skyContainer');
+    const blurOverlay = document.getElementById('blurOverlay');
+
+    window.onblur = function () {
+      isWindowFocused = false;
+      skyContainer.classList.add('sky-dimmed');
+      blurOverlay.classList.remove('opacity-0');
+      document.title = '🌙 잠시 멈춘 샤갈의 마을...';
+    };
+
+    window.onfocus = function () {
+      isWindowFocused = true;
+      skyContainer.classList.remove('sky-dimmed');
+      blurOverlay.classList.add('opacity-0');
+      document.title = '눈 내리는 샤갈의 마을 | Winter Gallery';
+    };
+  </script>
+</body>
+
+</html>

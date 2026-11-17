@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>눈 내리는 샤갈의 마을</title>
+
+  <style>
+    /* 1. 밤하늘 배경 설정 */
+    body {
+      margin: 0;
+      height: 100vh; /* 화면 높이를 100% 꽉 채움 */
+      background: linear-gradient(to bottom, #0b132b, #1c2541); /* 어두운 밤하늘 그라데이션 */
+      overflow: hidden; /* 눈이 화면 밖으로 나가도 스크롤바가 생기지 않게 숨김 */
+      font-family: sans-serif;
+    }
+
+    /* 2. 눈송이(div) 디자인 */
+    .snow {
+      position: absolute; /* top, left 좌표로 화면 어디든 자유롭게 이동 */
+      color: white;
+      user-select: none; /* 마우스로 드래그 선택 방지 */
+      pointer-events: none; /* 눈송이가 버튼 클릭을 방해하지 않도록 설정 */
+    }
+
+    /* 3. 화면 중앙 제목 및 버튼 영역 (실제 웹페이지 느낌) */
+    .content {
+      position: relative;
+      z-index: 10; /* 눈송이보다 글씨가 앞쪽에 보이도록 층(Layer) 높임 */
+      text-align: center;
+      color: white;
+      padding-top: 120px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 20px;
+      background-color: #ffffff;
+      color: #1c2541;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* 4. 화면 맨 아래 언덕과 작은 집 실루엣 (CSS로 간단히 표현) */
+    .ground {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 80px;
+      background-color: #e0e1dd; /* 눈 쌓인 땅 색깔 */
+      border-top-left-radius: 50% 30px; /* 둥근 언덕 모양 */
+      border-top-right-radius: 50% 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 화면에 보일 제목과 버튼 -->
+  <div class="content">
+    <h1>❄️ 눈 내리는 샤갈의 마을</h1>
+    <p id="statusText">밤하늘에서 눈이 내리고 있습니다.</p>
+    <button id="toggleBtn" onclick="toggleSnow()">눈 멈추기</button>
+  </div>
+
+  <!-- 바닥 언덕 -->
+  <div class="ground"></div>
+
+  <script>
+    // ==========================================
+    // [1단계] 필요한 변수 준비하기
+    // ==========================================
+    const snowCount = 40;   // 만들 눈송이 개수
+    let isSnowing = true;   // 현재 눈이 내리고 있는지 상태 저장 (true: 내림, false: 멈춤)
+    let timer = null;       // setInterval 타이머를 저장할 변수
+
+    // ==========================================
+    // [2단계] 처음에 눈송이 40개 생성하기
+    // ==========================================
+    function createSnow() {
+      for (let i = 0; i < snowCount; i++) {
+        // 1. 새로운 <div> 태그 하나 생성
+        const flake = document.createElement("div");
+        flake.className = "snow"; // CSS에서 만든 .snow 스타일 적용
+        flake.innerText = "*";    // 눈송이 모양
+
+        // 2. 랜덤 위치(가로, 세로) 및 랜덤 크기 계산
+        const randomLeft = Math.random() * window.innerWidth;
+        const randomTop = Math.random() * window.innerHeight;
+        const randomSize = Math.floor(Math.random() * 15) + 15; // 15px ~ 30px 크기
+
+        // 3. 계산한 값을 눈송이 스타일에 적용
+        flake.style.left = randomLeft + "px";
+        flake.style.top = randomTop + "px";
+        flake.style.fontSize = randomSize + "px";
+
+        // 4. 완성된 눈송이를 화면(body)에 추가
+        document.body.appendChild(flake);
+      }
+    }
+
+    // ==========================================
+    // [3단계] 눈송이를 아래로 한 칸씩 내리기
+    // ==========================================
+    function moveSnow() {
+      // 화면에 있는 모든 눈송이(.snow)를 가져옴
+      const flakes = document.getElementsByClassName("snow");
+
+      for (let i = 0; i < flakes.length; i++) {
+        // 현재 눈송이의 세로 위치(offsetTop)에 4px를 더해 아래로 이동
+        let currentTop = flakes[i].offsetTop + 4;
+
+        // 만약 눈송이가 화면 맨 아래(window.innerHeight)를 넘어갔다면?
+        if (currentTop > window.innerHeight) {
+          currentTop = 0; // 맨 위 하늘(0px)로 다시 올려보냄
+          flakes[i].style.left = (Math.random() * window.innerWidth) + "px"; // 가로 위치도 새로 랜덤 지정
+        }
+
+        // 바뀐 세로 위치를 실제 스타일에 반영!
+        flakes[i].style.top = currentTop + "px";
+      }
+    }
+
+    // ==========================================
+    // [4단계] 버튼 클릭 & 브라우저 탭 이동 이벤트
+    // ==========================================
+    // 버튼으로 눈 멈추기 / 다시 내리기
+    function toggleSnow() {
+      const btn = document.getElementById("toggleBtn");
+      const text = document.getElementById("statusText");
+
+      if (isSnowing) {
+        clearInterval(timer); // 타이머 정지 (눈 멈춤)
+        btn.innerText = "눈 다시 내리기";
+        text.innerText = "눈이 잠시 멈췄습니다.";
+        isSnowing = false;
+      } else {
+        timer = setInterval(moveSnow, 30); // 타이머 재시작
+        btn.innerText = "눈 멈추기";
+        text.innerText = "밤하늘에서 눈이 내리고 있습니다.";
+        isSnowing = true;
+      }
+    }
+
+    // [복습] 다른 창이나 탭을 클릭했을 때(onblur) 제목 바꾸기
+    window.onblur = function () {
+      document.title = "❄️ 마을에 눈이 쌓이고 있어요!";
+    };
+
+    // [복습] 다시 이 창으로 돌아왔을 때(onfocus) 원래 제목으로 복구
+    window.onfocus = function () {
+      document.title = "눈 내리는 샤갈의 마을";
+    };
+
+    // ==========================================
+    // [5단계] 페이지가 열리면 실제로 실행하기
+    // ==========================================
+    createSnow(); // 눈송이 40개 생성
+    timer = setInterval(moveSnow, 30); // 0.03초마다 moveSnow 함수 반복 실행
+  </script>
+</body>
+
+</html>

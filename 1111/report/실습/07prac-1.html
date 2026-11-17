@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>산수를 풀어 봅시다</title>
+    <style>
+      td {
+        padding: 0px 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>산수 문제를 풀어 봅시다.</h3>
+    <p>수식을 계산하여 답을 입력하고 채점 버튼을 누르세요.</p>
+    <hr />
+    <div>
+      <table>
+        <tr>
+          <td id="q0">5*6</td>
+          <td><input type="text" /></td>
+        </tr>
+        <tr>
+          <td id="q1">7+5*3</td>
+          <td><input type="text" /></td>
+        </tr>
+        <tr>
+          <td id="q2">23*2</td>
+          <td><input type="text" /></td>
+        </tr>
+        <tr>
+          <td id="q3">35-7</td>
+          <td><input type="text" /></td>
+        </tr>
+        <tr>
+          <td><button onclick="checkAnswer()">채점</button></td>
+          <td><span id="result">0</span></td>
+        </tr>
+      </table>
+    </div>
+
+    <script>
+      let answers = [30, 22, 46, 28];
+      let inputs = document.getElementsByTagName("input");
+
+      function checkAnswer() {
+        let count = 0;
+
+        for (let i = 0; i < answers.length; i++) {
+          let question = document.getElementById("q" + i);
+
+          if (inputs[i].value == answers[i]) {
+            count++;
+            question.style.textDecoration = "none";
+          } else {
+            question.style.textDecoration = "line-through";
+          }
+        }
+
+        document.getElementById("result").innerHTML = count;
+      }
+    </script>
+  </body>
+</html>
