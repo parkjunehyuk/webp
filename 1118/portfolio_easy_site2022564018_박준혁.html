@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>박준혁 | 웹프로그래밍 포트폴리오 사이트</title>
+  <style>
+    /* =========================================================
+       [공통 스타일 - 모든 영역에 동일한 디자인 규칙 적용]
+       - 외부 파일 없이 USB에 담아 인터넷 없이도 바로 열립니다.
+       ========================================================= */
+    :root {
+      --bg-body: #0f172a;
+      --bg-card: #1e293b;
+      --border: #334155;
+      --text-main: #f8fafc;
+      --text-sub: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --green: #34d399;
+      --amber: #fbbf24;
+      --font-sans: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+      --font-mono: "Consolas", "Monaco", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.7;
+      word-break: keep-all;
+    }
+
+    /* 상단 고정 메뉴바 */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+    }
+
+    .nav-wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .brand {
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--text-main);
+      text-decoration: none;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-left: 6px;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      margin-right: 12px;
+      font-weight: 600;
+    }
+
+    nav a:hover {
+      color: var(--accent);
+    }
+
+    .btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      font-family: var(--font-sans);
+    }
+
+    .btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* 본문 레이아웃 */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    section {
+      padding: 56px 0;
+      border-bottom: 1px solid var(--border);
+      scroll-margin-top: 60px;
+    }
+
+    .step-label {
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    h2 {
+      font-size: 1.7rem;
+      margin-bottom: 10px;
+    }
+
+    .desc {
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      font-size: 0.98rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .card h3 {
+      font-size: 1.08rem;
+      margin-bottom: 10px;
+      color: var(--accent);
+    }
+
+    .card ul {
+      padding-left: 18px;
+      color: var(--text-sub);
+      font-size: 0.95rem;
+    }
+
+    .card li {
+      margin-bottom: 6px;
+    }
+
+    /* 표지 카드 */
+    .hero-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 36px;
+    }
+
+    .hero-box h1 {
+      font-size: 2.1rem;
+      margin: 10px 0 14px;
+      line-height: 1.3;
+    }
+
+    .info-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+    }
+
+    .info-bar div span {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* 쉬운 코드 예시 박스 */
+    .example-box {
+      background: #0b1120;
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+
+    pre {
+      background: #090d16;
+      padding: 12px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      color: #e2e8f0;
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+
+    input[type="text"] {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: white;
+      padding: 6px 10px;
+      border-radius: 6px;
+      margin-right: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-card);
+      border-radius: 10px;
+      overflow: hidden;
+      font-size: 0.92rem;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+
+    th {
+      background: #0b1120;
+      color: var(--accent);
+    }
+
+    /* 하단 발표 대본 창 */
+    .script-box {
+      display: none;
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(920px, calc(100% - 24px));
+      background: #090d16;
+      border: 1px solid var(--accent);
+      border-radius: 12px;
+      padding: 16px;
+      z-index: 200;
+    }
+
+    .script-box.show {
+      display: block;
+    }
+
+    footer {
+      text-align: center;
+      padding: 36px 20px 80px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2, .grid-3, .info-bar {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 메뉴 -->
+  <header>
+    <div class="nav-wrap">
+      <a href="#intro" class="brand">박준혁 포트폴리오 <span class="badge">학생 연구·학습용</span></a>
+      <nav>
+        <a href="#intro">소개·목차</a>
+        <a href="#me">자기소개</a>
+        <a href="#what">이란·기능·이유</a>
+        <a href="#case">사례·예시</a>
+        <a href="#end">설치·용어·출처</a>
+      </nav>
+      <div>
+        <button class="btn" onclick="toggleScript()">발표 대본 보기</button>
+        <button class="btn" onclick="readAloud()">🔊 읽어주기</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 1. 소개 및 목차 -->
+  <section id="intro" data-script="안녕하십니까. 소프트웨어학과 2022564018 박준혁입니다. 오늘 웹프로그래밍 수업에서는 AI에게 질문하는 순서인 프롬프트 공학을 활용해 만든 저의 포트폴리오 사이트를 발표하겠습니다." data-tip="발음 주의: 소프트웨어학과[소프트웨어학꽈], 천천히 말하기">
+    <div class="container">
+      <div class="hero-box">
+        <div class="step-label">WEB PROGRAMMING PORTFOLIO</div>
+        <h1>AI와 함께 만든 박준혁의<br>웹프로그래밍 포트폴리오</h1>
+        <p style="color: var(--text-sub);">
+          수업 시간에 배운 웹 기초(HTML, CSS, 자바스크립트)와 AI 질문법을 활용해 만든 발표용 웹사이트입니다.<br>
+          <strong>내가 직접 수정한 코드</strong>와 <strong>AI가 만들어준 코드</strong>를 솔직하게 구분해서 정리했습니다.
+        </p>
+
+        <div class="info-bar">
+          <div><span>과목명</span><strong>웹프로그래밍</strong></div>
+          <div><span>학과</span><strong>소프트웨어학과</strong></div>
+          <div><span>학번 / 이름</span><strong>2022564018 박준혁</strong></div>
+          <div><span>발표 날짜</span><strong>2026년 11월 18일</strong></div>
+        </div>
+      </div>
+
+      <!-- 목차 -->
+      <div class="card" style="margin-top: 20px;">
+        <h3>📋 발표 목차</h3>
+        <p style="color: var(--text-sub); font-size: 0.95rem;">
+          1. 자기소개 &nbsp;→&nbsp;
+          2. 프롬프트 공학이란? &nbsp;→&nbsp;
+          3. 기능(장단점·차이점) &nbsp;→&nbsp;
+          4. 사용한 이유 &nbsp;→&nbsp;
+          5. 사례 및 쉬운 예시 &nbsp;→&nbsp;
+          6. 설치 방법 & 핵심 용어 &nbsp;→&nbsp;
+          7. 요약 & 출처(Reference) &nbsp;→&nbsp;
+          8. Q&amp;A
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. 자기소개 -->
+  <section id="me" data-script="먼저 제 소개를 하겠습니다. 저는 소프트웨어학과 2학년 박준혁입니다. 오버워치 딜러 마스터 티어를 찍으면서 빠른 상황 판단력과 집중력을 길렀고, 지금은 웹 기초를 배우면서 어떤 진로로 나갈지 차근차근 탐색하고 있습니다." data-tip="'어...' 같은 습관어 줄이고 또박또박 말하기">
+    <div class="container">
+      <div class="step-label">01. ABOUT ME</div>
+      <h2>자기소개: 끝까지 집중해서 해결하는 개발자 지망생</h2>
+      <p class="desc">소프트웨어학과 2학년 · 기초를 다지며 진로를 탐색하는 중</p>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3>🎮 나의 강점</h3>
+          <ul>
+            <li><strong>오버워치 딜러 마스터 티어</strong> (트레이서, 캐서디, 위도우, 소전, 한조 주력)</li>
+            <li>순간적인 상황을 빠르게 판단하고, 실수하면 바로 고치는 집중력이 강점입니다.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>💻 현재 배우는 것</h3>
+          <ul>
+            <li><strong>웹프로그래밍</strong>: 화면 구조(HTML), 꾸미기(CSS), 동작(자바스크립트) 기초</li>
+            <li><strong>자격증 준비</strong>: 네트워크관리사 2급, SQLD, 정보처리기사 로드맵 탐색</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>🧭 솔직한 진로 고민</h3>
+          <ul>
+            <li>AI 분야에 관심이 있지만 미적분 같은 어려운 수학에서 벽을 느꼈습니다.</li>
+            <li>그래서 아직 진로를 하나로 정하지 않고, 실용적인 개발 기초부터 넓게 익히는 중입니다.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 이란 · 기능 · 이유 -->
+  <section id="what" data-script="다음은 프롬프트 공학이란 무엇인지, 그리고 왜 사용했는지 설명하겠습니다. AI는 내가 입력한 내용과 가장 가까운 답을 찾아줍니다. 그래서 대충 질문하는 대신 내 학번, 과목, 원하는 형태를 구체적으로 적어주어 정확한 결과물을 얻었습니다." data-tip="발음 주의: '분류'는 [불류]로 발음됩니다.">
+    <div class="container">
+      <div class="step-label">02. CONCEPT & REASON</div>
+      <h2>프롬프트 공학이란? · 기능 · 사용한 이유</h2>
+      <p class="desc">AI에게 원하는 답을 정확하게 받아내기 위한 질문 설계 방법</p>
+
+      <div class="grid-2" style="margin-bottom: 18px;">
+        <div class="card">
+          <h3>💡 프롬프트 공학이란?</h3>
+          <ul>
+            <li>AI는 수만 가지 데이터 중에서 <strong>내가 적은 조건과 가장 가까운 답</strong>을 찾아줍니다.</li>
+            <li>게임에서 대충 쏘지 않고 적을 정확히 조준하듯, <strong>조건(역할, 목적, 형식)을 콕 집어 질문하는 기술</strong>입니다.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>🎯 왜 사용했을까? (이유)</h3>
+          <ul>
+            <li><strong>시간 절약</strong>: 수업 시간 50분 안에 웹사이트 뼈대를 빠르게 만들기 위해서입니다.</li>
+            <li><strong>학습 도우미</strong>: 어려운 코드 원리를 내 눈높이에 맞게 쉽게 풀어서 이해하기 위해 사용했습니다.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 기능: 장점, 단점, 차이점 -->
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 20%;">구분</th>
+            <th>핵심 내용</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>장점</strong></td>
+            <td>코딩 속도가 매우 빨라지고, 모르는 문법을 바로 물어보며 배울 수 있습니다.</td>
+          </tr>
+          <tr>
+            <td><strong>단점</strong></td>
+            <td>AI가 가끔 틀린 코드를 알려줄 수 있고, 내가 이해하지 못한 코드는 고치기 어렵습니다.</td>
+          </tr>
+          <tr>
+            <td><strong>차이점</strong></td>
+            <td>"사이트 만들어줘"(단순 질문) vs "2학년 수준으로 주석 달아서 만들어줘"(구체적 지시)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 4. 사례 및 쉬운 예시 -->
+  <section id="case" data-script="다음은 사례와 예시입니다. 저작권을 지키기 위해 제가 직접 수정하고 이해한 기초 코드와, AI가 만들어준 실험 코드를 명확히 나누었습니다. 화면의 버튼을 눌러 간단한 동작을 직접 보여드리겠습니다." data-tip="직접 입력칸에 글자를 치고 버튼을 눌러보세요!">
+    <div class="container">
+      <div class="step-label">03. EXAMPLES</div>
+      <h2>사례 및 쉬운 예시 (내 코드 vs AI 코드 구분)</h2>
+      <p class="desc">저작권 구분을 위해 직접 공부한 기초 예시와 AI 생성 실험을 나누어 정리했습니다.</p>
+
+      <div class="grid-2">
+        <!-- 사례 1 -->
+        <div class="card">
+          <h3>✅ 사례 1: 수업 예제 기반 기초 실습</h3>
+          <p style="font-size: 0.85rem; color: var(--amber); margin-bottom: 8px;">
+            ※ 수업 교재 코드를 참고해 직접 수정하고 원리를 익힌 내용입니다.
+          </p>
+          <ul>
+            <li><code>getElementById</code>로 HTML 태그를 찾아 글자와 색깔 바꾸기</li>
+            <li><code>setInterval</code>을 이용해 1초마다 움직이는 디지털 시계 만들기</li>
+          </ul>
+
+          <div class="example-box">
+            <strong style="color: var(--accent);">쉬운 예시 1: 글자 바꾸기</strong>
+            <p id="demoText" style="margin: 8px 0; font-weight: bold;">여기가 바뀝니다!</p>
+            <input type="text" id="demoInput" placeholder="이름 입력" />
+            <button class="btn" onclick="changeText()">바꾸기</button>
+            <pre>// 핵심 코드 2줄
+let name = document.getElementById("demoInput").value;
+document.getElementById("demoText").innerText = name + "님 환영합니다!";</pre>
+          </div>
+        </div>
+
+        <!-- 사례 2 -->
+        <div class="card">
+          <h3>🤖 사례 2: AI(프롬프트)로 만든 실험 결과물</h3>
+          <p style="font-size: 0.85rem; color: var(--green); margin-bottom: 8px;">
+            ※ 내가 직접 짠 코드가 아니라, AI에게 조건을 주어 생성한 실험 결과물입니다.
+          </p>
+          <ul>
+            <li><strong>눈 내리는 샤갈의 마을</strong>: 오타를 고치고 주석을 달아달라고 요청해 이해함</li>
+            <li><strong>3D 은하계 시뮬레이션</strong>: 수학 공식이 복잡해 AI 생성 기능 테스트용으로 활용함</li>
+          </ul>
+
+          <div class="example-box">
+            <strong style="color: var(--green);">쉬운 예시 2: 랜덤 숫자 뽑기</strong>
+            <p id="numText" style="margin: 8px 0; font-weight: bold;">행운의 숫자: ?</p>
+            <button class="btn" onclick="pickNumber()">1~100 뽑기</button>
+            <pre>// 핵심 코드 2줄
+let n = Math.floor(Math.random() * 100) + 1;
+document.getElementById("numText").innerText = "행운의 숫자: " + n;</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 설치 방법 · 핵심 용어 · 요약 · 출처 · Q&A -->
+  <section id="end" style="border-bottom: none;" data-script="마지막으로 설치 방법과 요약, 출처입니다. 이 사이트는 파일 하나로 되어 있어 USB에 담아 브라우저로 열면 바로 실행됩니다. 참고한 수업 자료와 AI 도구 출처를 아래 Reference에 남겼습니다. 이상으로 소프트웨어학과 박준혁의 발표를 마치겠습니다. 감사합니다." data-tip="마지막 인사는 여유 있고 밝게 마무리하세요!">
+    <div class="container">
+      <div class="step-label">04. SETUP, SUMMARY & REFERENCE</div>
+      <h2>설치 방법 · 핵심 용어 · 요약 및 출처</h2>
+      <p class="desc">오프라인 실행 방법과 발표 마무리 정리</p>
+
+      <div class="grid-2" style="margin-bottom: 18px;">
+        <div class="card">
+          <h3>⚙️ 설치 및 실행 방법</h3>
+          <ul>
+            <li>별도 프로그램 설치가 필요 없는 <strong>HTML 파일 1개</strong>로 구성</li>
+            <li><strong>USB에 담아</strong> 강의실 컴퓨터 크롬(Chrome)으로 열면 인터넷 없이도 바로 실행</li>
+            <li>기본 고딕 폰트를 사용해 어느 컴퓨터에서나 글씨가 깨지지 않음</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>🔑 핵심 용어 & 요약</h3>
+          <ul>
+            <li><strong>DOM</strong>: 자바스크립트가 HTML 태그를 조종할 수 있게 연결해주는 구조</li>
+            <li><strong>환각 현상</strong>: AI가 가끔 없는 사실을 진짜처럼 지어내는 현상</li>
+            <li><strong>요약</strong>: 기초 웹 문법을 익히고, AI를 올바르게 구분해 활용한 포트폴리오</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 출처(Reference) -->
+      <div class="card" style="margin-bottom: 28px;">
+        <h3>📚 Reference (출처 및 제작 기록 — 망각곡선 대비)</h3>
+        <ul>
+          <li><strong>웹프로그래밍 수업 실습 자료</strong>: <code>getElementById</code>, <code>setInterval</code>, <code>screen</code> 기초 예제 참조</li>
+          <li><strong>AI 협업 도구 (Gemini)</strong>: 웹사이트 디자인 틀 작성, 발표 대본 정리, 사례 2번 실험 코드 생성에 활용</li>
+        </ul>
+      </div>
+
+      <!-- Q&A -->
+      <div class="hero-box" style="text-align: center;">
+        <h2 style="font-size: 2rem; color: var(--accent);">Q &amp; A</h2>
+        <p style="margin: 10px 0 18px; color: var(--text-sub);">
+          질문해 주시면 성실히 답변드리겠습니다. 경청해 주셔서 감사합니다!
+        </p>
+        <strong>소프트웨어학과 2022564018 박준혁</strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- 발표 대본 플로팅 창 -->
+  <div class="script-box" id="scriptBox">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem;">
+      <strong style="color: var(--amber);" id="tipText">💡 발음 팁</strong>
+      <span style="color: var(--text-muted);">천천히 · 여유 있게 말하기</span>
+    </div>
+    <p id="scriptText" style="font-size: 0.95rem;"></p>
+  </div>
+
+  <footer>
+    © 2026 박준혁 (2022564018) · 웹프로그래밍 발표 및 학생 연구용 포트폴리오
+  </footer>
+
+  <script>
+    // 쉬운 예시 1: 글자 바꾸기
+    function changeText() {
+      let name = document.getElementById("demoInput").value;
+      if (name === "") {
+        document.getElementById("demoText").innerText = "이름을 먼저 입력해 주세요!";
+      } else {
+        document.getElementById("demoText").innerText = name + "님 환영합니다!";
+      }
+    }
+
+    // 쉬운 예시 2: 랜덤 숫자 뽑기
+    function pickNumber() {
+      let n = Math.floor(Math.random() * 100) + 1;
+      document.getElementById("numText").innerText = "행운의 숫자: " + n;
+    }
+
+    // 현재 스크롤 위치에 맞는 발표 대본 자동 연결
+    const sections = document.querySelectorAll("section[data-script]");
+    let activeSec = sections[0];
+
+    function updateScript() {
+      let pos = window.scrollY + 200;
+      sections.forEach(sec => {
+        if (sec.offsetTop <= pos && sec.offsetTop + sec.offsetHeight > pos) {
+          activeSec = sec;
+        }
+      });
+      document.getElementById("scriptText").innerText = activeSec.getAttribute("data-script");
+      document.getElementById("tipText").innerText = "💡 " + activeSec.getAttribute("data-tip");
+    }
+
+    window.addEventListener("scroll", updateScript);
+    updateScript();
+
+    // 발표 대본 창 열기/닫기
+    function toggleScript() {
+      document.getElementById("scriptBox").classList.toggle("show");
+    }
+
+    // 음성으로 읽어주기 (TTS)
+    function readAloud() {
+      window.speechSynthesis.cancel();
+      let msg = new SpeechSynthesisUtterance(activeSec.getAttribute("data-script"));
+      msg.lang = "ko-KR";
+      msg.rate = 0.95;
+      window.speechSynthesis.speak(msg);
+    }
+  </script>
+</body>
+</html>

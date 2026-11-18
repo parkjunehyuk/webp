@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>getElementById 핵심 예제</title>
+</head>
+<body>
+  <!-- 1. 글자와 색상을 바꿀 대상 (id="title") -->
+  <h2 id="title">여기가 바뀝니다!</h2>
+
+  <!-- 2. 사용자가 글자를 입력할 칸 (id="userInput") -->
+  <input type="text" id="userInput" placeholder="아무 글자나 입력하세요" />
+  <button onclick="changeContent()">적용하기</button>
+
+  <script>
+    function changeContent() {
+      // [단계 1] id가 "userInput"인 입력창을 찾아서, 안에 적힌 값(.value)을 가져옴
+      const inputBox = document.getElementById("userInput");
+      const text = inputBox.value;
+
+      // [단계 2] id가 "title"인 h2 태그를 찾아옴
+      const heading = document.getElementById("title");
+
+      // [단계 3] 찾아온 h2 태그의 글자(.innerText)와 글자색(.style.color)을 변경!
+      if (text === "") {
+        heading.innerText = "글자를 먼저 입력해 주세요!";
+        heading.style.color = "red";
+      } else {
+        heading.innerText = "입력한 내용: " + text;
+        heading.style.color = "blue";
+      }
+    }
+  </script>
+</body>
+</html>
